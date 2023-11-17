@@ -1,5 +1,51 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Product Counter App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MainMenu(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MainMenu extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Main Menu'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CounterScreen()),
+                );
+              },
+              child: Text('Product Counter'),
+            ),
+            // Add other menu options as needed
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class CounterScreen extends StatefulWidget {
   @override
   _CounterScreenState createState() => _CounterScreenState();
@@ -65,24 +111,6 @@ class _CounterScreenState extends State<CounterScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Product Counter App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CounterScreen(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
