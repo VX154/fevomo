@@ -1,50 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Product Counter App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MainMenu(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class MainMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main Menu'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CounterScreen()),
-                );
-              },
-              child: Text('Product Counter'),
-            ),
-            // Add other menu options as needed
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CounterScreen extends StatefulWidget {
   @override
@@ -55,6 +10,28 @@ class _CounterScreenState extends State<CounterScreen> {
   int passCount = 0;
   int reworkCount = 0;
   int defectiveCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounts(); // Load counts when the screen is initialized
+  }
+
+  void _loadCounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      passCount = prefs.getInt('passCount') ?? 0;
+      reworkCount = prefs.getInt('reworkCount') ?? 0;
+      defectiveCount = prefs.getInt('defectiveCount') ?? 0;
+    });
+  }
+
+  void _saveCounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('passCount', passCount);
+    prefs.setInt('reworkCount', reworkCount);
+    prefs.setInt('defectiveCount', defectiveCount);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +49,19 @@ class _CounterScreenState extends State<CounterScreen> {
             _buildCategoryCard('Products Passed', passCount, () {
               setState(() {
                 passCount++;
+                _saveCounts(); // Save counts when incremented
               });
             }),
             _buildCategoryCard('Products Reworked', reworkCount, () {
               setState(() {
                 reworkCount++;
+                _saveCounts(); // Save counts when incremented
               });
             }),
             _buildCategoryCard('Defective Products', defectiveCount, () {
               setState(() {
                 defectiveCount++;
+                _saveCounts(); // Save counts when incremented
               });
             }),
             _buildCategoryCard('Total Products', passCount + reworkCount + defectiveCount, null),
@@ -111,6 +91,24 @@ class _CounterScreenState extends State<CounterScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Product Counter App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CounterScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
